@@ -3,22 +3,52 @@
 		<style>
 			body {
 				font-family: 'Trebuchet MS', sans-serif;
+				text-align: center;
+			}
+			h3 {
+				font-style: italic;
 			}
 		</style>
 	</head>
 	<body>
 		<h1>CS184 Project 1</h1>
 		<h2>Task 1</h2>
-		<p>When the imposter is <i>sus!</i></p>
+			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
+			<p>clockwise + counter clockwise (fixed with counter if statement), occasional out of bounds pixels colored in (fixed by
+			removing rasterize_line lines of code), occasional blank spaces right before bounds (changed for statements to start
+			with floats at 0.5 instead of accounting for that right at the end in rasterize_point)</p>
+			<h3>Deliverables:</h3>
+			<p>We rasterize a triangle by sampling points at fixed distances that lay inside the bounds of a triangle. In our case,
+			with a sample rate of 1, that would mean valid points would each be 1 x and y y unit apart. You can ensure all of the
+			sample points are in bounds of the triangle by running 3 line tests.</p>
+			<p>Our algorithm is no worse than one that checks each sample within the bounding box of the triangle because that is
+			exactly what it does. Based on the edges of the triangle, we look at the points within a minimum area square around the
+			triangle, and only sample the points that are in the bounds of the triangle, as per the 3 line tests.</p>
+			<img src= './images/task1.png'>
 		<h2>Task 2</h2>
-		<p>asdfasdf</p>
+			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
+			<p>When the imposter is <i>sus!</i></p>
+			<h3>Deliverables:</h3>
+			<p>amogus</p>
 		<h2>Task 3</h2>
-		<p>asdfasdf</p>
+			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
+			<p>asdfasdf</p>
+			<h3>Deliverables:</h3>
+			<p>asdfasdf</p>
 		<h2>Task 4</h2>
-		<p>asdfasdf</p>
+			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
+			<p>asdfasdf</p>
+			<h3>Deliverables:</h3>
+			<p>asdfasdf</p>
 		<h2>Task 5</h2>
-		<p>asdfasdf</p>
+			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
+			<p>asdfasdf</p>
+			<h3>Deliverables:</h3>
+			<p>asdfasdf</p>
 		<h2>Task 6</h2>
-		<p>asdfasdf</p>
+			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
+			<p>asdfasdf</p>
+			<h3>Deliverables:</h3>
+			<p>asdfasdf</p>
 	</body>
 </html>
