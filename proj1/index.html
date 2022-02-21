@@ -12,6 +12,7 @@
 	</head>
 	<body>
 		<h1>CS184 Project 1</h1>
+		<h1>Lucas Huang :: Frank Cuoco</h1>
 		<h2>Task 1</h2>
 			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
 			<p>clockwise + counter clockwise (fixed with counter if statement), occasional out of bounds pixels colored in (fixed by
@@ -24,7 +25,7 @@
 			<p>Our algorithm is no worse than one that checks each sample within the bounding box of the triangle because that is
 			exactly what it does. Based on the edges of the triangle, we look at the points within a minimum area square around the
 			triangle, and only sample the points that are in the bounds of the triangle, as per the 3 line tests.</p>
-			<img src= './images/task1.png'>
+			<img src= './images/task1.png' width='800'>
 		<h2>Task 2</h2>
 			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
 			<p>When the imposter is <i>sus!</i></p>
@@ -39,12 +40,28 @@
 			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
 			<p>asdfasdf</p>
 			<h3>Deliverables:</h3>
-			<p>asdfasdf</p>
+			<p>The idea of barycentric coordinates is very closely related to the concept of “change of basis” that we have learned in
+			the EECS16A/B series. Say you have a point in triangle ABC at location (x, y), and we want to get the related point
+			location for that some location in triangle VaVbVc. Barycentric coordinates allow us to transform (x,y) in the ABC
+			domain into (u,v) in the VaVbVc domain.</p>
+			<img src='./images/task4-1.png' width='800'>
+			<img src='./images/task4-2.png' width='800'>
 		<h2>Task 5</h2>
 			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
 			<p>asdfasdf</p>
 			<h3>Deliverables:</h3>
-			<p>asdfasdf</p>
+			<p>When you’re rasterizing textured shapes, you can go about sampling texture values in a couple ways. First, if you sample
+			pixels using nearest-pixel sampling, you simply pick the texture sample closest to the point you’re trying to sample and
+			add its color value to the sample buffer. Instead, if you sample pixels using bilinear sampling, you look at the 4
+			nearest samples, calculate each of their relative distances from the location you’re trying to sample, then run 2D
+			linear interpolation on those 4 points, using their relative distances as weights. Add the output color of that
+			calculation to the sample buffer.</p>
+			<img src='./images/task5.png' width='800'>
+			<p>Top Left: nearest pixel, sample rate 1, Top Right: nearest pixel, sample rate 16, Bottom Left: bilinear, sample rate 1,
+			Bottom Right: bilinear, sample rate 16</p>
+			<p>Relative differences: For the orange part of the texture for nearest pixel, there is a lot of randomness with the shades
+			of each pixel, while bilinear is a lot more smoother and constant in color. Additionally, the bilinear sampled picture
+			both look a bit more “blurry” than their nearest sample counterparts.</p>
 		<h2>Task 6</h2>
 			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
 			<p>asdfasdf</p>
