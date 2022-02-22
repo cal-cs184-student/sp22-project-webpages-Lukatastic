@@ -49,11 +49,21 @@
 			subpixels in a way to show now antialiasing effect despite fitting in the framework of subpixels. Subpixels are loaded
 			into a 1D sample buffer in row-major order for subpixels grouped by pixels also sorted in row-major order. Color values
 			calculated for each pixel group of subpixels are then stored in the final RGB framebuffer for rendering.</p>
-			<p>Below, we can see the tip of the pink triangle from basic test 4 under sample rates 1, 4, 9, and 16.</p>
+			<p>The triangle rasterizing algorithm makes use of the discovery that for sample size S, the top left subpixel of a given
+			pixel with top left corner at (x,y) would be positioned at (½)*(1/sqrt(S)) and that we move to S-1 more pixels in both
+			the x and y directions by moving 1/sqrt(S) down or right on a given axis. For each subpixel, we do a three-line test,
+			and fill the subpixel.</p>
+			<p>Below, we can see the tip of the pink triangle from basic test 4 under sample rates 1, 4, 9, and 16. Following that, we
+			have the overall zoomed out image for those sample rates.</p>
 			<img src='./images/task2-1.png' width='200'>
 			<img src='./images/task2-2.png' width='200'>
 			<img src='./images/task2-3.png' width='200'>
 			<img src='./images/task2-4.png' width='200'>
+			<img src='./images/task2-5.png' width='400'>
+			<img src='./images/task2-6.png' width='400'>
+			<img src='./images/task2-7.png' width='400'>
+			<img src='./images/task2-8.png' width='400'>
+
 
 		<h2>Task 3</h2>
 			<h3>Things we didn’t take into account/problems encountered and solved:</h3>
@@ -111,14 +121,26 @@
 			had to calculate two mipmap levels; this time a continuous and a floored level. We ended up returning lerp(D - floorD,
 			sample_bilinear(sp.p_it uv, floorD), sample_bilinear(sp.p_uv, floorD + 1)).</p>
 			<h3>Deliverables:</h3>
+			<p>Level sampling takes advantage of sampling at different resolutions recursively to get a gradient of different "zooming"
+			levels of the same image for use when rasterizing textures on triangles. For our implementation, we find the barycentric
+			coordinates for a triangle, and then load values that we find into a SampleParams struct. The optimal mipmap level is
+			the found using the algorithm from lecture derived from multiple uses of the Pythagorean Theorem and finding the max.
+			Here, we have the values we use for level sampling. Nearest level sampling may be used by rounding the mipmap to the
+			closest value, while linear level sampling involves an interpolation of a proportion of the level higher and lower than
+			the calculated float mipmap level as determined by the precise level calculation.</p>
 			<p>With the completion of this project we are now able to use both nearest pixel and bilinear pixel sampling with level
 			sampling configurations where we can use the zeroth mipmap level, nearest mipmap level, or linearly sampled mipmap
 			level; thus, trilinear sampling is now one of the possible sampling methods we are able to utilize. A complete pipeline
 			from svg files to triangle rasterization to sampling is now complete, allowing us to fully utilize the potential of our
 			rasterizer.</p>
-			<p>Increasing the sampling rate improves antialiasing, but also requires more memory usage and lowers the speed.</p>
+			<p>Level sampling increases the memory usage of through the extra overhead a mipmap requires over a simple 2D texture and
+			lowers speed, but improves antialiasing efforts. Pixel sampling takes time to run bilinear interpolation and calculation
+			but can be faster than level sampling. Supersampling and calculating subpixels takes quadratically more time with sample
+			rate, does not require the same memory overhead as mipmaps and is particularly effective for smoothing edges. Increasing
+			the sampling rate improves antialiasing, but also requires more memory usage and lowers the speed.</p>
 			<img src='./images/task6.jpg' width='800'>
 			<p>Top Left: L_ZERO and P_NEAREST, Top Right: L_ZERO and P_LINEAR, Bottom Left: L_NEAREST and P_NEAREST, Bottom Right:
 			L_NEAREST and P_LINEAR</p>
+			<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/proj1/index.html</p>
 	</body>
 </html>
