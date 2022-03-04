@@ -39,12 +39,12 @@
 	interpolation of two control points is pushed to the larger vector of Vector2Ds, and this vector of vectors is returned,
 	bringing us a step closer to evaluating a point on the Bezier curve. By evaluating t continuously between 0 and 1, we
 	plot out the full Bezier curve we have defined.</p>
-	<img src='./images/task1-1.png' width='200'>
-	<img src='./images/task1-2.png' width='200'>
-	<img src='./images/task1-3.png' width='200'>
-	<img src='./images/task1-4.png' width='200'>
-	<img src='./images/task1-5.png' width='200'>
-	<img src='./images/task1-6.png' width='200'>
+	<img src='./images/task1-1.png' width='250'>
+	<img src='./images/task1-2.png' width='250'>
+	<img src='./images/task1-3.png' width='250'>
+	<img src='./images/task1-4.png' width='250'>
+	<img src='./images/task1-5.png' width='250'>
+	<img src='./images/task1-6.png' width='250'>
 	<p>Above, we see a 6 control point Bezier curve being evaluated through all the steps up to the final point on the curve. Below, we see the completed Bezier curve, as well as a similar curve modified through manipulation of the control points and parameter t.</p>
 	<img src='./images/task1-curve.png' width='400'>
 	<img src='./images/task1-edited.png' width='400'>
@@ -98,7 +98,9 @@
 	updated to guarantee they do not reference a moved halfedge. Interestingly enough, edges themselves do not need to be
 	modified, as no halfedge gets reassigned to another edge, so the edge we return itself does not change after the
 	operation. If an edge is on a boundary, we return the edge without going through any pointer modifications.</p>
-	<img src='./images/edgeflips.JPG' width='800'>
+	<p>Below, we can see the teapot as initially rendered and then after a series of edge flips.</p>
+	<img src='./images/teapot.png' width='400'>
+	<img src='./images/edgeflips.JPG' width='400'>
 	<p>The most eventful part of debugging came while implementing upsampling. We had to completely reassign our pointers
 	multiple times to follow different graphics of edge flipping that we were using as a reference. Additionally, we had to
 	ensure that we were assigning a sufficient amount of pointers for the halfedges, edges, vertices, and faces.</p>
@@ -127,8 +129,10 @@
 	looking at our split edge diagram that we drew out, we finally realized that both our e0 AND our e5 needed to remain as
 	old edges, since e5 wasn’t actually new, but in fact half of the original edge e0. Once we fixed this in our code, our
 	upsample worked perfectly!</p>
-	<img src='./images/edgesplits.JPG' width='800'>
-	<img src='./images/edgeflipsandsplits.JPG' width='800'>
+	<img src='./images/teapot.png' width='400'>
+	<img src='./images/edgesplits.JPG' width='400'>
+	<img src='./images/edgeflipsandsplits.JPG' width='400'>
+	<p>Above, we have a teapot mesh rendered before any manipulation, after a series of edge splits, and lastly after performing both edge flips and edge splits.</p>
 
 	<h2>Task 6</h2>
 	<h3>Things we didn’t take into account/problems encountered and solved:</h3>
@@ -149,14 +153,16 @@
 	new edges that connected one old vertex and one new one (again, using the isNew tags of the vertices and edges). Finally
 	we set all of the new vertex positions using our stored values from earlier.</p>
 	<p>The mesh becomes more detailed, each panel looking like a recursive version of its previous self. The sharp edges and
-	corners become more and more rounded over time.</p>
+	corners become more and more rounded over each loop subdivision, as seen below.</p>
 	<img src='./images/loopsubcube.JPG' width='800'>
 	<p>Yes you can pre-process the cube with edge flips and splits to allow for it to subdivide symmetrically. This prevents
 	the upsampling function from averaging the vertex locations of different faces of the cube, the root cause of the corner
 	smoothing and asymmetricality. If you preprocess correctly, the corners of the cube are preserved much better, as you
-	can see in this image.</p>
-	<img src='./images/cubesharp.png' width='800'>
-	<img src='./images/cubecube.png' width='800'>
+	can see in this series of subdivisions below.</p>
+	<img src='./images/cubesharp.png' width='400'>
+	<img src='./images/cubesharper.png' width='400'>
+	<img src='./images/cubesharpest.png' width='400'>
+	<img src='./images/cubecube.png' width='400'>
 	
 	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/proj2/index.html</p>
 </body>
