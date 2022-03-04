@@ -150,11 +150,13 @@
 	we set all of the new vertex positions using our stored values from earlier.</p>
 	<p>The mesh becomes more detailed, each panel looking like a recursive version of its previous self. The sharp edges and
 	corners become more and more rounded over time.</p>
+	<img src='./images/loopsubcube.JPG' width='800'>
 	<p>Yes you can pre-process the cube with edge flips and splits to allow for it to subdivide symmetrically. This prevents
 	the upsampling function from averaging the vertex locations of different faces of the cube, the root cause of the corner
 	smoothing and asymmetricality. If you preprocess correctly, the corners of the cube are preserved much better, as you
 	can see in this image.</p>
-	<img src='./images/loopsubcube.JPG' width='800'>
+	<img src='./images/cubecube.JPG' width='800'>
+	
 	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/proj2/index.html</p>
 </body>
 </html>
