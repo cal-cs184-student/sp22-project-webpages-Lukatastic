@@ -17,7 +17,11 @@
 	<h1>CS184 Project 2</h1>
 	<h1>Lucas Huang :: Frank Cuoco</h1>
 	<h2>Overview</h2>
-	<p>Sussy imposter</p>
+	<p>In this project, we experimented with mesh geometries, mainly focusing on the concepts of Bezier curves and the halfedge
+	data structure. A mesh has many ways of being changed/adjusted, such as changing its shading (i.e Phong) and subdividing
+	it’s faces further (i.e. flipping/splitting edges to upsample). One big thing we learned from this project is the power
+	of abstraction, especially related to the halfedge structure. By implementing simple flip and split functions using a
+	much smaller example (2 triangles), we are able to do amazing things with much larger meshes!</p>
 	<h2>Task 1</h2>
 	<h3>Things we didn’t take into account/problems encountered and solved:</h3>
 	<p>This task was completed relatively smoothly once we understood how to work with the vector of Vector2Ds. Initially, we
@@ -81,107 +85,76 @@
 
 	<h2>Task 4</h2>
 	<h3>Things we didn’t take into account/problems encountered and solved:</h3>
-	<p>There have not been significant problems with this part as we comprehensively reassigned all potentially affected
-	pointers and deleted the reassignments that had no effect on our edge flip.</p>
+	<p>Initially, we did not realize the full extent that the pointers needed to be reassigned after an edge flip. At first, we
+	only reassigned edges/halfedges/etc. that we expected to change after an edge flip, but quickly learned we needed to
+	manually assign every single pointer, regardless of if it had been changed or not in the flip. Finally, we were
+	originally trying to assign pointers based on our own memory or online diagrams, but we ultimately decided it was best
+	for us to draw everything out and use that as our reference.</p>
 	<h3>Deliverables:</h3>
 	<p>We have implemented the edge flip operation by taking into consideration all mesh elements (halfedge, edge, face,
 	vertex) associated with the two faces next to the edge we are flipping. All pointers are considered in our
 	implementation, and ones that are changed are updated appropriately. As the halfedge instances store most of the info, a
 	bulk of the pointer changes comes from the reassignments of halfedge pointers, with the face and vertex pointers also
-	updated to guarantee they do not reference a moved halfedge. If an edge is on a boundary, we return the edge without
-	doing any pointer modifications. Our debugging for this task was surprisingly uneventful.</p>
-	<img src='./images/task4-1.png' width='800'>
-	<img src='./images/task4-2.png' width='800'>
+	updated to guarantee they do not reference a moved halfedge. Interestingly enough, edges themselves do not need to be
+	modified, as no halfedge gets reassigned to another edge, so the edge we return itself does not change after the
+	operation. If an edge is on a boundary, we return the edge without going through any pointer modifications.</p>
+	<img src='./images/edgeflips.JPG' width='800'>
+	<p>The most eventful part of debugging came while implementing upsampling. We had to completely reassign our pointers
+	multiple times to follow different graphics of edge flipping that we were using as a reference. Additionally, we had to
+	ensure that we were assigning a sufficient amount of pointers for the halfedges, edges, vertices, and faces.</p>
 
 	<h2>Task 5</h2>
 	<h3>Things we didn’t take into account/problems encountered and solved:</h3>
-	<p>One big problem we ran into was while we were implementing sample_nearest. The function seemed straightforward
-		enough to
-		code, but when we ran tests we were getting blank screens. We soon realized that uv[0] and uv[1] were both
-		values in the
-		range [0,1], while the texture is much larger than that. Multiplying uv[0] by mip.width and uv[1] by mip.height
-		fixed
-		our problem. Additionally, we had to spend a lot of time on edge cases, especially within the sample_bilinear
-		function.
-		The two main sets of edge cases we wrote code for were if the sample point was on any of the 4 corners of the
-		bounds
-		(e.g. 0,0) or if a point was on an edge (e.g. x is 0 and y is nonzero).</p>
+	<p>First, we weren’t sure at first how/where to set the location of the new vertex. We originally had the vertex being
+	placed at the horizontal midpoint, but eventually learned from our incorrect splitting that it needed to be placed at
+	the vertical midpoint. Next, we had a small issue with the calculation of the midpoint itself, changing it from an int
+	to a float. Additionally, similar to flip edge, we did not initially realize that we had to set neighbors for every
+	single halfedge along with the halfedges for all of the vertices, edges, and faces. Finally, we were having problems
+	with the “isNew” labeling for our edges in our upsample until we realized that e5 along with e0 is an old edge. We
+	adjusted the booleans at the end of the function accordingly.</p>
 	<h3>Deliverables:</h3>
-	<p>When you’re rasterizing textured shapes, you can go about sampling texture values in a couple ways. First, if you
-		sample
-		pixels using nearest-pixel sampling, you simply pick the texture sample closest to the point you’re trying to
-		sample and
-		add its color value to the sample buffer. Instead, if you sample pixels using bilinear sampling, you look at the
-		4
-		nearest samples, calculate each of their relative distances from the location you’re trying to sample, then run
-		2D
-		linear interpolation on those 4 points, using their relative distances as weights. Add the output color of that
-		calculation to the sample buffer.</p>
-	<img src='./images/task5.jpg' width='800'>
-	<p>Top Left: nearest pixel, sample rate 1, Top Right: nearest pixel, sample rate 16, Bottom Left: bilinear, sample
-		rate 1,
-		Bottom Right: bilinear, sample rate 16</p>
-	<p>Relative differences: For the orange part of the texture for nearest pixel, there is a lot of randomness with the
-		shades
-		of each pixel, while bilinear is a lot more smoother and constant in color. Additionally, the bilinear sampled
-		picture
-		both look a bit more “blurry” than their nearest sample counterparts.</p>
+	<p>We implemented the edge split operation very similarly to edge flip. We started by checking if the edge we are given was
+	on a boundary. If it was, we just returned immediately. If not, we started by assigning all of the edges, halfedges,
+	vertices, and faces to variables, along with making new ones in anticipation for the split. During this time, we also
+	prepared the location of the new vertex and set it equal to newVertex->position. Next, we updated the pointers to what
+	they should be post split (according to a hand drawn diagram), making sure to set the neighbors for all the halfedges,
+	along with setting the halfedges of all the vertices, faces, and edges. Finally, we set the new vertex and new edges’
+	isNew tags to true, and returned the new vertex.</p>
+	<p>The most eventful part of the debugging came while implementing upsampling. Our upsampling wasn’t looking correct, and
+	we determined it was because we weren’t labeling our edges’ isNew tags correctly. It appeared that our code would flip
+	the wrong edges (thinking they were new), and not flip the correct edges (thinking they were old). We tracked this
+	problem down to our split edge, since this was the only function that was setting isNew to true in our code. After
+	looking at our split edge diagram that we drew out, we finally realized that both our e0 AND our e5 needed to remain as
+	old edges, since e5 wasn’t actually new, but in fact half of the original edge e0. Once we fixed this in our code, our
+	upsample worked perfectly!</p>
+	<img src='./images/edgesplits.JPG' width='800'>
+	<img src='./images/edgeflipsandsplits.JPG' width='800'>
 
 	<h2>Task 6</h2>
 	<h3>Things we didn’t take into account/problems encountered and solved:</h3>
-	<p>Filling out the sample function took the most of our time here. We had to account for 6 cases, where psm could
-		equal 0
-		or 1, and lsm could equal 0,1, or 2. Cases lsm = 0, psm = 0 and lsm = 0, psm = 1 were easy because we had
-		already
-		implemented them in Task 5. Cases lsm = 1, psm = 0 and lsm = 1, psm = 1 were similarly simple, as all we had to
-		do was
-		make a slight change to our level input. Cases lsm = 2, psm = 0 and lsm = 2, psm = 1 were most difficult,
-		because we had
-		to implement a lerp() function for each. For the former case, we had to calculate the continuous and rounded
-		mipmap
-		level for the sample, and based on which was bigger, determined our x value for lerp(x, sample_nearest(sp.p_uv,
-		D<sub>1</sub>),
-		sample_nearest(sp.p_uv, D<sub>2</sub>)). For the latter case, we applied the trilinear filtering outlined in the
-		slides and again
-		had to calculate two mipmap levels; this time a continuous and a floored level. We ended up returning lerp(D -
-		floorD,
-		sample_bilinear(sp.p_it uv, floorD), sample_bilinear(sp.p_uv, floorD + 1)).</p>
+	<p>At first, we were very confused on how to ensure that each iteration of upsample had correct isNew labeling for our
+	edges and vertices. We were worried about our implementation failing after multiple iterations. To solve this, we added
+	two for loops at the beginning of our function that set every edge and vertex’s isNew to false. Next, we had a few
+	issues with our if statement checks for splitting and flipping edges. For instance, we initially were checking the isNew
+	tag for edges to determine splits, but instead opted to look at the isNew tags of each of the vertices of each edge to
+	determine if the edge was new. Finally, we were at first struggling on where we would temporarily store the new
+	positions of the old and new vertices, even considering making an array. Ultimately, we realized we could just store the
+	values in the newPosition fields of vertices and edges.</p>
 	<h3>Deliverables:</h3>
-	<p>Level sampling takes advantage of sampling at different resolutions recursively to get a gradient of different
-		"zooming"
-		levels of the same image for use when rasterizing textures on triangles. For our implementation, we find the
-		barycentric
-		coordinates for a triangle, and then load values that we find into a SampleParams struct. The optimal mipmap
-		level is
-		the found using the algorithm from lecture derived from multiple uses of the Pythagorean Theorem and finding the
-		max.
-		Here, we have the values we use for level sampling. Nearest level sampling may be used by rounding the mipmap to
-		the
-		closest value, while linear level sampling involves an interpolation of a proportion of the level higher and
-		lower than
-		the calculated float mipmap level as determined by the precise level calculation.</p>
-	<p>With the completion of this project we are now able to use both nearest pixel and bilinear pixel sampling with
-		level
-		sampling configurations where we can use the zeroth mipmap level, nearest mipmap level, or linearly sampled
-		mipmap
-		level; thus, trilinear sampling is now one of the possible sampling methods we are able to utilize. A complete
-		pipeline
-		from svg files to triangle rasterization to sampling is now complete, allowing us to fully utilize the potential
-		of our
-		rasterizer.</p>
-	<p>Level sampling increases the memory usage of through the extra overhead a mipmap requires over a simple 2D
-		texture and
-		lowers speed, but improves antialiasing efforts. Pixel sampling takes time to run bilinear interpolation and
-		calculation
-		but can be faster than level sampling. Supersampling and calculating subpixels takes quadratically more time
-		with sample
-		rate, does not require the same memory overhead as mipmaps and is particularly effective for smoothing edges.
-		Increasing
-		the sampling rate improves antialiasing, but also requires more memory usage and lowers the speed.</p>
-	<img src='./images/task6.jpg' width='800'>
-	<p>Top Left: L_ZERO and P_NEAREST, Top Right: L_ZERO and P_LINEAR, Bottom Left: L_NEAREST and P_NEAREST, Bottom
-		Right:
-		L_NEAREST and P_LINEAR</p>
+	<p>First, we made sure to set all of the edges and vertices’ isNew tags to false, in order to prevent infinite loops and/or
+	incorrect upsampling after further iterations. Next, we computed the new positions of the newly added vertices (using
+	the formula from the project spec) and stored those locations temporarily in our old edges. After that, we computed the
+	new positions of the old vertices (using the other formula from the project spec) and stored those locations temporarily
+	in the old vertices. From there, we split all existing (old) edges by checking their isNew tags, and then flipped all
+	new edges that connected one old vertex and one new one (again, using the isNew tags of the vertices and edges). Finally
+	we set all of the new vertex positions using our stored values from earlier.</p>
+	<p>The mesh becomes more detailed, each panel looking like a recursive version of its previous self. The sharp edges and
+	corners become more and more rounded over time.</p>
+	<p>Yes you can pre-process the cube with edge flips and splits to allow for it to subdivide symmetrically. This prevents
+	the upsampling function from averaging the vertex locations of different faces of the cube, the root cause of the corner
+	smoothing and asymmetricality. If you preprocess correctly, the corners of the cube are preserved much better, as you
+	can see in this image.</p>
+	<img src='./images/loopsubcube.JPG' width='800'>
 	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/proj2/index.html</p>
 </body>
 </html>
