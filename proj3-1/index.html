@@ -16,6 +16,13 @@
 <body>
 	<h1>CS184 Project 3-1</h1>
 	<h1>Lucas Huang :: Frank Cuoco</h1>
+	<h2>Overview</h2>
+	<p>In this project, we implemented a 3D renderer that utilizes ray tracing. We were able to use our renderer to produce
+	realistic looking images of different objects given a light source by simulating rays of light and shadows. Some of the
+	things that we implemented include creating rays coming from the camera pointing on a scene, using 0/1/1+ bounces and
+	collisions to determine pixel colors, simulating direct and indirect lighting, and implementing adaptive sampling.</p>
+	<p>This project was very difficult and time consuming, but also very rewarding. It was fascinating to see how mathematical
+	algorithms like Monte Carlo Integration and the Russian Roulette algorithm were utilized in our code.</p>
 	<h2>Part 1</h2>
 	<p>Our ray tracing algorithm uses rays starting from a “camera” going into our space to emulate light running through an
 	image. We use the ray equation r(t) = o + td, where o is the coordinates of the camera, d is the unit vector following
@@ -37,7 +44,11 @@
 	<img src='./images/1-CBgems.png'>
 	<img src='./images/1-CBspheres.png'>
 	<p>Above, we see renderings of the files CBempty, CBgems, and CBspheres using normal shading.</p>
-	<p><i>Dev comments: Working with Möller–Trumbore in our code base, the variable numbers for n and p are indexed to 1 rather than 0, leading to some misshading of our meshes at first.</i><p>
+	<p><i>Dev comments: Originally, for our triangle intersection function, we were trying to use a variation of plane intersection to implement it. After struggling for a while with bugs, we decided to switch over to using the Möller–Trumbore algorithm to implement the function. Once we implemented Möller–Trumbore in our code base, we had our variable numbers for n and p indexed to 1 rather than 0, leading to some misshading of our meshes at first. Once we fixed this, things went smoothly from there.Originally, for our triangle intersection function, we were trying to use a variation of plane intersection to implement
+	it. After struggling for a while with bugs, we decided to switch over to using the Möller–Trumbore algorithm to
+	implement the function. Once we implemented Möller–Trumbore in our code base, we had our variable numbers for n and p
+	indexed to 1 rather than 0, leading to some misshading of our meshes at first. Once we fixed this, things went smoothly
+	from there.</i><p>
 
 	<h2>Part 2</h2>
 	<p>Our BVH (bounding volume hierarchy) tree construction algorithm is as follows: For each node, find the bounding box of
@@ -50,8 +61,17 @@
 	<img src='./images/2-beast.png'>
 	<img src='./images/2-CBlucy.png'>
 	<p>The rendering of maxplanck, beast, and CBlucy uses 50801, 64618, and 133796 primitives respectively, takes 0.1230, 0.0551, and 0.1777 seconds to render with BVH, and takes over 20, 22, and 30 minutes to render without BVH.</p>
-	<p>When rendering with BVHs, our render time increases marginally with an increase in number of primitives, while without BVHs, rendering time sharply and proportionally increases when our number of primitives increase. When rendering with BVHs, we only ever need to check a small number of intersections for each ray, due to the max number of primitives in each BVH node that we check; the number of BVH nodes increases logarithmically for a linear increase in number of primitives, leading to its more stunted growth.</p>
-	<p><i>Dev comments: BVH was mostly straightforward. An issue with C++ variable definitions led us to use an undefined int in our code, resulting in memory issues before being resolved.</i></p>
+	<p>Rendering times with BVH acceleration are noticeably faster on more complex geometries than without. This is because by
+	recursively splitting our set of primitives into subsets of bounding boxes containing less and less primitives, we are
+	able to effectively reduce our expected cost of ray intersection. Instead of having to check for an intersection with
+	every individual primitive when we want to find the closest intersection of a ray, we now only have to look at our set
+	of primitives one half at a time (recursive calls on the left and right side of our BVH tree structure), changing our
+	expected cost for n primitives from O(n) to O(log(n)).</p>
+	<p><i>Dev comments: The main problem we ran into in this section was creating the heuristic for the split point of primitives for the BVH
+	tree. We were originally getting all of the primitives being put in our right node and 0 being put in our left node for
+	our heuristic. Once we changed the heuristic to our current implementation (the centroid of a bbox of the primitives’
+	centroids), our primitives were split evenly into a bushy tree. Additionally, we had a small issue with C++ variable
+	definitions that led us to use an undefined int in our code, resulting in memory issues before being resolved.</i></p>
 
 	<h2>Part 3</h2>
 	<p>For uniform hemisphere sampling, we take a random direction from a hemisphere, create a ray going outward, and test if
@@ -79,18 +99,51 @@
 	this form of sampling. Light importance sampling makes use of our knowledge of light sources to guarantee ray
 	intersections with light sources giving us more valuable radiance data to work with and reduces noise. As rays come out
 	of lights now, point lights are able to be factored in for the rendering of meshes.</p>
-	<p><i>Dev comments: Working out when to use inputs from the object space or the world space had resulted in the vast amount of issues in this part. Be careful when thinking about rays!</i></p>
+	<p><i>Dev comments: The estimate_direct_lighting_importance function gave us the most problems by far. Our outputs were not looking how they
+	were supposed to (too many black dots clumped in incorrect places). After making adjustments to how we calculated our
+	shadow rays (tweaking their origin, direction, and min/max t values) and our L_out calculation (mainly cosine issues),
+	we were able to get the correct outputs. Additionally, deciding if our inputs/outputs should be in the object or world
+	space resulted in a large amount of issues in this part, and required a lot of thoughtfulness when thinking about rays.</i></p>
 
 
 	<h2>Part 4</h2>
 	<p>In our implementation of indirect lighting, we use Russian Roulette estimation, where we may get a fair estimate of our
-	lighting. Our implementation runs recursively, where we use a pdf to determine if a ray continues bouncing or calls
-	one_bounce_radiance marking our final bounce. A depth variable introduced maintains an internal count for how many
-	bounces the ray has gone through and returns 0 when we have reached our max_ray_depth.</p>
+	lighting (and prevent infinite recursion). Our implementation runs recursively, where we use a pdf to determine if a ray
+	continues bouncing or calls one_bounce_radiance marking our final bounce. A depth variable introduced maintains an
+	internal count for how many bounces the ray has gone through and returns 0 when we have reached our max_ray_depth.</p>
 	<p>Below, we see our bunny as ran using indirect lighting.</p>
 	<img src='./images/4-bunny0.png'>
+	<p><i>Dev comments: The Russian Roulette component of this part was tricky, especially with its special cases. Originally, we had it so it
+	was a direct 70% likeliness of continuing the algorithm per function call, regardless of current ray depth and the max
+	ray depth. After running into problems, we added lines of code to 1. Skip the Russian Roulette once if indirect
+	illumination is "turned on" (max ray depth > 1) and 2. The current ray depth is equal to the max ray depth. Once we
+	implemented this, our problem was fixed.</i></p>
+
 
 	<h2>Part 5</h2>
+	<p>The point of adaptive sampling is to help reduce noise in our rendered images by dynamically increasing the number of
+	samples for each pixel based on how “difficult” they are to converge. We determine this convergence point by calculating
+	an “I” for each pixel, which is equal to 1.96 times the standard deviation of the pixel divided by the square root of
+	the number of samples n already sampled through a pixel. Once this “I” shrinks below a certain threshold (in this case,
+	max tolerance times the mean), we can stop tracing rays for that pixel. In code, we achieve this by checking if the
+	convergence of a pixel is less than or equal to the threshold (mentioned earlier) every samplesPerBatch samples. If it
+	is, we break out of our sampling loop and update our pixel and sampleCountBuffer. Otherwise, we continue to trace rays.</p>
+	<p>Below, we have picked the dragon scene to render at 2048 samples per pixel, with both its sample rate image and noise-free result.</p>
+	<img src='./images/5-dragon_rate.png'>
+	<img src='./images/5-dragon.png'>
+	<p><i>Dev comments: Our main issue was that, originally, we were getting a completely blue screen for our rate pictures. When we moved our
+	illuminance calculations to the end of our main for loop (instead of at the beginning) and calculated our convergence
+	variable separately, the rate picture output was what we expected.</i></p>
+
+	<h2>Partner Reflection (How we collaborated, how it went, and what we learned)</h2>
+	<p>As partners, we collaborated mostly in-person (Berkeley Way West) and occasionally remotely (during Spring Break). We
+	also attended as many project parties and office hours in order to get the most assistance as possible. Our
+	collaboration itself went well, although oftentimes, we would get stuck on a certain part of the project for several
+	hours. Usually, it wasn’t until frequent Piazza scrubbing or OH/Project Party help that we were able to continue. We
+	learned that we need to start the projects as early as we possibly can, and show up to as many OH’s and Project Parties
+	as our schedules allow (and show up early, to make sure we get high up on the queue to increase our chances of getting
+	more help).</p>
+
 
 	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/proj3-1/index.html</p>
 </body>
