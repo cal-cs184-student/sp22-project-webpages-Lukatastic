@@ -150,9 +150,11 @@
 	max tolerance times the mean), we can stop tracing rays for that pixel. In code, we achieve this by checking if the
 	convergence of a pixel is less than or equal to the threshold (mentioned earlier) every samplesPerBatch samples. If it
 	is, we break out of our sampling loop and update our pixel and sampleCountBuffer. Otherwise, we continue to trace rays.</p>
-	<p>Below, we have picked the dragon scene to render at 2048 samples per pixel, with both its sample rate image and noise-free result.</p>
+	<p>Below, we have picked the dragon and bunny scenes to render at 2048 samples per pixel, with both its sample rate image and noise-free result.</p>
 	<img src='./images/5-dragon_rate.png'>
 	<img src='./images/5-dragon.png'>
+	<img src='./images/5-bunny_rate.png'>
+	<img src='./images/5-bunny.png'>
 	<p><i>Dev comments: Our main issue was that, originally, we were getting a completely blue screen for our rate pictures. When we moved our
 	illuminance calculations to the end of our main for loop (instead of at the beginning) and calculated our convergence
 	variable separately, the rate picture output was what we expected.</i></p>
