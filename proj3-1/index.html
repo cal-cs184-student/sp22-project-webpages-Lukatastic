@@ -111,8 +111,30 @@
 	lighting (and prevent infinite recursion). Our implementation runs recursively, where we use a pdf to determine if a ray
 	continues bouncing or calls one_bounce_radiance marking our final bounce. A depth variable introduced maintains an
 	internal count for how many bounces the ray has gone through and returns 0 when we have reached our max_ray_depth.</p>
-	<p>Below, we see our bunny as ran using indirect lighting.</p>
+	<p>Below, we see images of a blob, bunny, and dragon rendered with global illumination using 1024 samples per pixel.</p>
+	<img src='./images/4-blob.png'>
+	<img src='./images/4-bunny.png'>
+	<img src='./images/4-dragon.png'>
+	<p>Here, we have the bunny scene rendered with only direct illumination.</p>
+	<img src='./images/4-bunnydir.png'>
+	<p>In comparison, here is the same bunny rendered using only indirect illumination.</p>
+	<img src='./images/4-bunnyindir.png'>
+	<p>Below, we see the bunny's rendered views changing based on max_ray_depth settings of 0, 1, 2, 3, and 100 respectively, using 1024 samples per pixel.</p>
 	<img src='./images/4-bunny0.png'>
+	<img src='./images/4-bunny1.png'>
+	<img src='./images/4-bunny2.png'>
+	<img src='./images/4-bunny3.png'>
+	<img src='./images/4-bunny100.png'>
+	<p>For a max_ray_depth of 0, only the light source is visible as no rays are traced. With a ray depth of 1, we are introduced to direct lighting. Having a ray depth of 2 creates colored shadows from wall and object bounces. Ray depth 3 further enhances this effect; a depth of 100 lets the rays create a realistic image to their full potential, yet its effect compared to the number of ray bounces allowed is marginal, due to the rays getting weakened with more bounces.</p>
+	<p>Now, we look at the bunny rendered using sample-per-pixel rates of 1, 2, 4, 8, 16, 64, and 1024. Each rendering uses 4 light rays.</p>
+	<img src='./images/4-5bunny1.png'>
+	<img src='./images/4-5bunny2.png'>
+	<img src='./images/4-5bunny4.png'>
+	<img src='./images/4-5bunny8.png'>
+	<img src='./images/4-5bunny16.png'>
+	<img src='./images/4-5bunny64.png'>
+	<img src='./images/4-5bunny1024.png'>
+	<p>We notice that as the sample-per-pixel rates increases, the static in the image is reduced, as the radiance values for pixels are refined. With random factors present in random ray generation, we need more samples to reduce the radiance variance present and generate a more accurate image.</p>
 	<p><i>Dev comments: The Russian Roulette component of this part was tricky, especially with its special cases. Originally, we had it so it
 	was a direct 70% likeliness of continuing the algorithm per function call, regardless of current ray depth and the max
 	ray depth. After running into problems, we added lines of code to 1. Skip the Russian Roulette once if indirect
