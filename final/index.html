@@ -15,8 +15,53 @@
 
 <body>
 	<h1>CS184 Final Project Proposal</h1>
-	<h1>Lucas Huang :: Frank Cuoco :: Manh Khang Le :: Haoshen Ouyang</h1>
-	<h2>Overview</h2>
+	<h1>Realistic Firework Rendering/Simulation</h1>
+	<h1>Frank Cuoco :: Lucas Huang :: Manh Khang Le :: Haoshen Ouyang</h1>
+	<h2>Summary</h2>
+	<p>We aim to make a renderer that can produce realistic looking videos/gifs of fireworks lighting up nearby objects like water, buildings,
+	etc as they are fired into the air and then deflagrate.</p>
+
+	<h2>Problem Description:</h2>
+	<ul>
+		<li>Problem 1: Simulate a realistic firework
+			<ul>
+				<li>Potential solution: simulate the firework particles’ dynamics (shapes, trails, mousing, blinking)</li>
+			</ul>
+		</li>
+		<li>Problem 2: Dynamically lighting the surrounding objects as the firework is shot
+			<ul>
+				<li>Potential solution: simulate the firework particles’ dynamics (shapes, trails, mousing, blinking)</li>
+			</ul>
+		</li>
+	</ul>
+
+	<h2>Goals and Deliverables:</h2>
+	<ul>
+		<li>We plan to deliver a simulation capable of producing a video/gif of one firework being shot up, exploding, and lighting
+		up its surroundings (water and metal buildings) along the way. If things go ahead of schedule, we hope to be able to
+		produce videos with multiple fireworks of different colors being shot at different times, along with many additional
+		surroundings (grass, dirt, glass/concrete buildings). We will measure the quality/performance of our deliverable by
+		comparing its realism to actual videos of fireworks in similar environments, along with the smoothness of the video/gif
+		(frames per second).</li>
+		<li>Most of the questions that we receive from the presentation may be related to the particle effects/physics of the
+		firework, since it will expand the topic of particle systems from lecture and Project 4.</li>
+	</ul>
+
+	<h2>Schedule:</h2>
+	<ul>
+		<li>Week 1: Firework light source completed</li>
+		<li>Week 2: Surroundings implemented + properly lit by firework light source (direct + indirect lighting)</li>
+		<li>Week 3: Scene is fully animated (firework movement, explosion, and lighting)</li>
+		<li>Week 4: (If time permits) multiple fireworks at once + additional surroundings implemented</li>
+	</ul>
+
+	<h2>Resources:</h2>
+	<p>There are two potential directions we could go. The first would be to use Project 3-1 as a starting point, and then
+	create a video by taking many screen shots at different times and stitching them together. The pros of this would be
+	that we’re familiar with the codebase, but the cons would be that it may be more difficult to code a firework in this
+	environment, given its complexity. The other direction would be to use an engine like Unity. This would make it easier
+	for us to make animated things like fireworks and water effects, but would be more difficult to learn since none of us
+	have experience using Unity.</p>
 
 	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/final/index.html</p>
 </body>
