@@ -4,7 +4,7 @@
 	<style>
 		body {
 			font-family: 'Trebuchet MS', sans-serif;
-			text-align: center;
+			text-align: left;
 		}
 
 		h3 {
@@ -14,12 +14,17 @@
 </head>
 
 <body>
-	<h1>CS184 Final Project Proposal</h1>
-	<h1>Realistic Firework Rendering/Simulation</h1>
-	<h1>Frank Cuoco :: Lucas Huang :: Manh Khang Le :: Haoshen Ouyang</h1>
-	<h2>Summary</h2>
-	<p>We aim to make a renderer that can produce realistic looking videos/gifs of fireworks lighting up nearby objects like water, buildings,
-	etc as they are fired into the air and then deflagrate.</p>
+	<div text-align='center'>
+		<h1>CS184 Final Project Proposal</h1>
+		<h1>Realistic Firework Rendering/Simulation</h1>
+		<h1>Frank Cuoco :: Lucas Huang :: Manh Khang Le :: Haoshen Ouyang</h1>
+		<img src='./images/fireworkoverwater.jpg'>
+		<h2>Summary</h2>
+		<p>We aim to make a renderer that can produce realistic looking videos/gifs of fireworks lighting up nearby objects like
+			water, buildings,
+			etc as they are fired into the air and then deflagrate.</p>
+	</div>
+
 
 	<h2>Problem Description:</h2>
 	<ul>
@@ -30,7 +35,8 @@
 		</li>
 		<li>Problem 2: Dynamically lighting the surrounding objects as the firework is shot
 			<ul>
-				<li>Potential solution: simulate the firework particles’ dynamics (shapes, trails, mousing, blinking)</li>
+				<li>Potential solution: blending and mixing lights from multiple sources (light sources + reflective sources + brightness +
+				color)</li>
 			</ul>
 		</li>
 	</ul>
