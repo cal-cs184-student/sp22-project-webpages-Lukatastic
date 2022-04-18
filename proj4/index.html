@@ -1,7 +1,136 @@
 <html>
-	<head>
-	</head>
-	<body>
-		Project 4 here
-	</body>
+
+<head>
+	<style>
+		body {
+			font-family: 'Trebuchet MS', sans-serif;
+			text-align: center;
+		}
+
+		h3 {
+			font-style: italic;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>CS184 Project 4</h1>
+	<h1>Lucas Huang :: Frank Cuoco</h1>
+	<h2>Overview</h2>
+	<p>In this project, we made a real-time cloth simulator. Our implementation allows the cloth to respond to gravity as
+	expected (using masses and springs with numerical integration), collide with spheres, planes, and itself (using bumping
+	and spatial maps), and take on different shaders (Diffuse, Blinn-Phong, Texture Mapping, Bump & Displacement Map, and
+	Mirror).</p>
+	<h2>Part 1</h2>
+	<p><i>Things we didn’t take into account/problems encountered and solved:</i></p>
+	<p>Initially, our grid was not showing up at all when we ran clothsim.exe. We realized the issue was from how we were
+	pinning our vertices while accessing the vector&lt;std::vector&lt;int&gt;&gt; data structure. Some adjustments with our indexing
+		into the array resolved the issue.</p>
+	<p><i>Deliverables:</i></p>
+	<p>Below are screenshots of scene/pinned2.json where we are looking at the structure of our point masses and springs in the cloth wireframe.</p>
+	<img src='./images/pinned2_SC1.JPG' width='300'>
+	<img src='./images/pinned2_SC2.JPG' width='300'>
+	<p>Below is the wireframe without any shearing constraints.</p>
+	<img src='./images/without_shearing.JPG' width='300'>
+	<p>Below is the wireframe without only shearing constraints.</p>
+	<img src='./images/only_shearing.JPG' width='300'>
+	<p>Below is the wireframe without all constraints.</p>
+	<img src='./images/all_constraints.JPG' width='300'>
+
+	<h2>Part 2</h2>
+	<p><i>Things we didn’t take into account/problems encountered and solved:</i></p>
+	<p>Originally, our cloth had not behaved as expected in response to gravity. We realized the issue was when we iterated
+	through point masses to do Verlet integration, we were making changes to copies of the PMs instead of the original ones.
+	A quick dereferencing in our for loop resolved the issue.</p>
+	<p><i>Deliverables:</i></p>
+	<p>The larger the spring constant value (ks), the larger the force applied on each point mass pair is. Consequently, raising the ks value causes the cloth to have more folds, as seen in the following rendering.</p>
+	<img src='./images/3_large_ks.JPG' width='300'>
+	<p>The larger the density value of the cloth is, the less recursive movement effect a force has. For example, in the first low
+	density screen shot below, the entire cloth ripples as soon as it touches the sphere, whereas in the second high density shot, only
+	the exact part of the cloth that is touching the sphere moves.</p>
+	<img src='./images/3_small_density.JPG' width='300'>
+	<img src='./images/3_large_density.JPG' width='300'>
+	<p>Damping helps to simulate the loss in energy that would occur due to heat/friction of the cloth and a collision object.
+	The larger the damping value, the smaller the cloth’s movement is in future timesteps.</p>
+	<p>Below is the cloth from scene/pinned4.json at rest using default parameters.</p>
+	<img src='./images/4pinned.JPG' width='300'>
+
+	<h2>Part 3</h2>
+	<p><i>Things we didn’t take into account/problems encountered and solved:</i></p>
+	<p>One problem we ran into was our cloth was vibrating a little bit too much when it was resting on the flat plane. After
+	we adjusted how we were scaling our forces, the vibration went down significantly (to an expected amount).</p>
+	<p><i>Deliverables:</i></p>
+	<p>Below are screenshots of scene/sphere.json where ks is set to 5000, 500, then 50000 in that order.</p>
+	<img src='./images/sphere5000.JPG' width='600'>
+	<img src='./images/sphere500.JPG' width='600'>
+	<img src='./images/sphere50000.JPG' width='600'>
+	<p>The more we increase ks, the more folded the cloth becomes while lying on the sphere. With ks = 50000, we see a looser fit around the sphere, while with ks = 500 the cloth more tightly follows the sphere's curvature.</p>
+	<p>Below, we see a shaded cloth at rest on our plane.</p>
+	<img src='./images/plane_collision.png' width='300'>
+	<img src='./images/plane_collision_2.JPG' width='300'>
+	<p></p>
+
+	<h2>Part 4</h2>
+	<p><i>Things we didn’t take into account/problems encountered and solved:</i></p>
+	<p>The main problem that we had with this section was our cloth was still clipping into itself and not self colliding
+	properly. After debugging, we found it was an issue with our hash_position function. After adding a case for each
+	orientation and tweaking the final returned calculation, our cloth began to fold on itself as expected.</p>
+	<p><i>Deliverables:</i></p>
+	<p>In the following images, we see our cloth's journey in folding as it collides with the plane and itself.</p>
+	<img src='./images/self_collide_start.JPG' width='600'>
+	<img src='./images/self_collide_mid.JPG' width='600'>
+	<img src='./images/self_collide_end.JPG' width='600'>
+	<p>Lower ks and higher density values cause the cloth to self-fold/move only closer to the impact point on the ground,
+		whereas higher ks and lower density values immediately cause movement all the way up the cloth after initial
+		contact.</p>
+	<img src='./images/4_low_density.JPG' width='600'>
+	<img src='./images/4_high_density.JPG' width='600'>
+	<img src='./images/4_low_ks.JPG' width='600'>
+	<img src='./images/4_high_ks.JPG' width='600'>
+
+	<h2>Part 5</h2>
+	<p><i>Things we didn’t take into account/problems encountered and solved:</i></p>
+	<p>In doing Blinn-Phong shading, adjusting the coefficients to light the cloth in the most visually pleasing way took some
+	effort. In doing bump mapping, we had a bug as a result of the fractions contained in the calculations for dU and dV.</p>
+	<p><i>Deliverables:</i></p>
+	<p>A shader program is a program that determines attributes of an image such as a pixel's color and light. The programs are
+	optimized for use on GPUs, which can efficiently process mathematical data and are parallelized. Vertex shaders
+	calculate transformed mathematical attributes of an image and produce position outputs of various coordinates. Fragment
+	shaders calculate color of pixels using the output of the vertex shaders.</p>
+	<p>Blinn-Phong shading integrates ambient lighting, diffuse reflections, and specular reflections. A half vector near the normal serves to remove inaccuracies resulting from Phong reflection. Constants ka, kd, and ks serve to refine our lighting model, and the value p affects the degree of specular reflection present, giving the cloth texture more shine.</p>
+	<p>Below are images of Blinn-Phong shading applied on our cloth, followed by the ambient, diffuse, and specular portions on their own.</p>
+	<img src='./images/5_phong.JPG' width='600'>
+	<img src='./images/5_ambient.JPG' width='600'>
+	<img src='./images/5_diffuse.JPG' width='600'>
+	<img src='./images/5_specular.JPG' width='600'>
+	<p>Below, we see our texture mapping shader being put to use with a texture of Among Us crewmates (and potentially an imposter).</p>
+	<img src='./images/5_custom_texture.JPG' width='600'>
+	<p>Here, we have bump mapping shown on our cloth and sphere, followed by displacement mapping on our sphere.</p>
+	<img src='./images/5_bump_cloth_on_sphere.JPG' width='600'>
+	<img src='./images/5_bump_sphere.JPG' width='600'>
+	<img src='./images/5_displacement_sphere.JPG' width='600'>
+	<p>Bump mapping involves shading object frags using surface normals in computing lighting. Displacement lighting takes this a step further by also altering the positions of vertexes, manipulating the 3D visualization of objects. Displacement mapping thus feels more "life-like" and 3D, in comparison with bump mapping, which feels artificially smooth in comparison.</p>
+	<p>Now, we will change the sphere's coarseness and see its visual appearence through bump and then displacement mapping. The following images show the sphere rendered with -o 16 -a 16 and viewed using bump and displacement mapping respectively.</p>
+	<img src='./images/5_bump_sphere_o16a16.JPG' width='600'>
+	<img src='./images/5_displacement_sphere_o16a16.JPG' width='600'>
+	<p>The next two images show bump and displacement mapping on the sphere with -o 128 -a 128.</p>
+	<img src='./images/5_bump_sphere_o128a128.JPG' width='600'>
+	<img src='./images/5_displacement_sphere_o128a128.JPG' width='600'>
+	<p>We notice that for the displacement spheres especially, the lower 16x16 resolution leads to a poor quality mesh as there are too little vertices that every adjustment is magnified; the top of our sphere looks "caved in" as a result. The higher 128x128 resolution produces a sphere accurately adjusted to the texture. Bump mapping, without the vertex adjustments, look relatively similar with both resolutions.</p>
+	<p>Here we see the mirror shaders and its effect on our cloth and sphere.</p>
+	<img src='./images/5_mirror_cloth.JPG' width='600'>
+	<img src='./images/5_mirror_sphere.JPG' width='600'>
+
+	<h2>Partner Reflection (How we collaborated, how it went, and what we learned)</h2>
+	<p>As partners, we collaborated mostly remotely as a result of Lucas' injury. Our collaboration itself went a lot smoother
+	than the last project. This can be attributed to both of us having a stronger grasp on the material of this project as
+	opposed to previous projects, and that we were able to get the help we needed in project parties from TA’s and our
+	peers. We definitely benefited from proactively starting the project and making use of as many OH’s/Project Parties as
+	our schedules allowed this time. This class has been a powerful intellectual experience in exploring the world of
+	computer graphics, and we are excited to experiment with our own ideas in the final project.</p>
+
+
+	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/proj4/index.html</p>
+</body>
+
 </html>
