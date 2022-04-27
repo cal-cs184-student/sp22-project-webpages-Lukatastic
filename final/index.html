@@ -15,17 +15,42 @@
 
 <body>
 	<div text-align='center'>
-		<h1>CS184 Final Project Proposal</h1>
+		<h1>CS184 Final Project</h1>
 		<h1>Realistic Firework Rendering/Simulation</h1>
 		<h1>Frank Cuoco :: Lucas Huang :: Manh Khang Le :: Haoshen Ouyang</h1>
+		<h1>April 26, 2022 :: Project Milestone</h1>
+		<h2>Work so far:</h2>
+		<ul>
+			<li>Generated dae file that stimulates fireworks before passing to the renderer.</li>
+			<li>Adding objects of different materials to the scene.</li>
+			<li>Implemented light intensity calculations upon the simulated light sources (particles), as follows:</li>
+		</ul>
+		<img src='./images/equa.jpg'>
+		<p>The C values are the red, green and blue color components, and the R, G, and B values are of the light at the source.</p>
+		<h2>Progress Reflection:</h2>
+		<p>Our group has taken time to understand how to best utilize Blender for producing scenes that we will use in our firework
+		simulation. Once we passed this hurdle, our progress so far has been smooth. We plan to meet regularly going forward to
+		develop our full realistic firework simulation as imagined into reality.</p>
+		<h2>Updated Work Plan:</h2>
+		<ul>
+			<li>4/28: Ensure the particles of the firework are light sources; add multiple fireworks, give fireworks different color(s)</li>
+			<li>4/29: Add surroundings that mimic buildings (most likely glass and concrete)</li>
+			<li>4/30-5/1: Ensure that the firework is properly lighting the surroundings</li>
+			<li>5/2-5/3: Exporting the Blender file as a .dae file, importing it into our Project 3, and ensuring the render is made properly</li>
+			<li>5/4: Stitch multiple .dae renders together to get final firework simulation video</li>
+			<li>5/4: Prep final presentation deliverables</li>
+		</ul>
+		<p>Link to Slides: https://docs.google.com/presentation/d/1NpIsW_s3XCrE-UzkJFGIPe7SV_jh_A2wfo3qFb95_Iw/edit?usp=sharing</p>
+		<p>Link to Video: https://drive.google.com/file/d/14-9pgkcvspxj2UCxCmErV_ZVYhKdvphx/view?usp=sharing</p>
+		<p>Link to Website: https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/final/index.html</p>
+	</div>
+
+	<h1>April 11, 2022 :: Project Proposal</h1>
 		<img src='./images/fireworkoverwater.jpg'>
 		<h2>Summary</h2>
 		<p>We aim to make a renderer that can produce realistic looking videos/gifs of fireworks lighting up nearby objects like
 			water, buildings,
 			etc as they are fired into the air and then deflagrate.</p>
-	</div>
-
-
 	<h2>Problem Description:</h2>
 	<ul>
 		<li>Problem 1: Simulate a realistic firework
