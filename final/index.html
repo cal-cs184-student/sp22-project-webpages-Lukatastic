@@ -15,97 +15,108 @@
 
 <body>
 	<div>
-		<h1>CS184 Final Project</h1>
-		<h1>Realistic Firework Rendering/Simulation</h1>
+		<h1>CS184 Final Project: Realistic Firework Particle Simulation</h1>
 		<h2>Frank Cuoco :: Lucas Huang :: Manh Khang Le :: Haoshen Ouyang</h2>
-		<h2>April 26, 2022 :: Project Milestone</h2>
-		<h2>Work so far:</h2>
-		<ul>
-			<li>Generated dae file that stimulates fireworks before passing to the renderer.</li>
-			<li>Adding objects of different materials to the scene.</li>
-			<li>Implemented light intensity calculations upon the simulated light sources (particles), as follows:</li>
-		</ul>
-		<img src='./images/equa.png'>
-		<p>The C values are the red, green and blue color components, and the R, G, and B values are of the light at the source.</p>
-		<h2>Progress Reflection:</h2>
-		<p>Our group has taken time to understand how to best utilize Blender for producing scenes that we will use in our firework
-		simulation. Once we passed this hurdle, our progress so far has been smooth. We plan to meet regularly going forward to
-		develop our full realistic firework simulation as imagined into reality.</p>
-		<h2>Updated Work Plan:</h2>
-		<ul>
-			<li>4/28: Ensure the particles of the firework are light sources; add multiple fireworks, give fireworks different color(s)</li>
-			<li>4/29: Add surroundings that mimic buildings (most likely glass and concrete)</li>
-			<li>4/30-5/1: Ensure that the firework is properly lighting the surroundings</li>
-			<li>5/2-5/3: Exporting the Blender file as a .dae file, importing it into our Project 3, and ensuring the render is made properly</li>
-			<li>5/4: Stitch multiple .dae renders together to get final firework simulation video</li>
-			<li>5/4: Prep final presentation deliverables</li>
-		</ul>
-		<p>Link to Slides: https://docs.google.com/presentation/d/1NpIsW_s3XCrE-UzkJFGIPe7SV_jh_A2wfo3qFb95_Iw/edit?usp=sharing</p>
-		<p>Link to Video: https://drive.google.com/file/d/14-9pgkcvspxj2UCxCmErV_ZVYhKdvphx/view?usp=sharing</p>
-		<p>Link to Website: https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/final/index.html</p>
-	</div>
-
-	<div>
-	<h1>April 11, 2022 :: Project Proposal</h1>
-	<img src='./images/fireworkoverwater.jpg'>
-	<h2>Summary</h2>
-	<p>We aim to make a renderer that can produce realistic looking videos/gifs of fireworks lighting up nearby objects like
-		water, buildings,
-		etc as they are fired into the air and then deflagrate.</p>
-	<h2>Problem Description:</h2>
-	<ul>
-		<li>Problem 1: Simulate a realistic firework
-			<ul>
-				<li>Potential solution: simulate the firework particles’ dynamics (shapes, trails, mousing, blinking)</li>
-			</ul>
-		</li>
-		<li>Problem 2: Dynamically lighting the surrounding objects as the firework is shot
-			<ul>
-				<li>Potential solution: blending and mixing lights from multiple sources (light sources + reflective sources
-					+ brightness +
-					color)</li>
-			</ul>
-		</li>
-	</ul>
+		<img src='./images/fireworkoverwater.jpg'>
+		<h2>Abstract</h2>
+		<p>In this project, we created an interactive realistic particle-based firework simulation that contains two main modes.
+		“Music Mode” turns your keyboard into a musical firework piano, where each key within “ASDFGHJK” is tied to a
+		specifically colored firework and note (one octave A4-A5). “Freestyle Mode” shoots a randomly colored firework to
+		wherever you click on the screen (with an added trail effect). The fireworks physics themselves were created using
+		mathematical formulas from class and research papers.</p>
+		<h2>Technical approach</h2>
+		<h3>Physical Simulation</h3>
+		<p>Our simulation aims to capture the evolution of firework particle movement over a set of time following a blast. For each blast fragment, we apply an initial velocity pulse releasing energy E converted from kinetic energy and
+		calculated using the following equation:</p>
+		<img src='./images/equation-e.png'>
+		<p>In our simulation, we primarily focused on the drag force on our particles. This is modeled using the equation</p>
+		<img src='./images/equation-v.png'>
+		<p>where C_D is the drag coefficient, p_a is the density of air, p is the density of pyrotechnic display material, R is the
+		radius of the shell, r_in is the outward normal position of the particle, and r_oin is the initial distance between the
+		particle and inner detonation shell. This equation balances accuracy of the firework simulation with calculations
+		involved per iteration. A constant drag coefficient is assumed, and the force of drag is assumed to significantly
+		outweigh force of air and buoyancy at the speeds of the particles in calm air conditions.</p>
+		<p>Before the deflagration of the fireworks, firework shells are shot into the air and explode when reaching their high
+		point. The vertical position of the particle over time may be found using the equation</p>
+		<img src='./images/equation-y.png'>
+		<p>where our acceleration a is an approximated gravitational acceleration g = -10 m/s^2. For the simulation of the shell,
+		Euler's method is used to create an approximation of movement. As our acceleration is constant and we are using the
+		calculations for a short one-dimensional segment, we avoid the error accumulation present from the method.</p>
+		<h3>Music Notes</h3>
+		<p>There are four main oscillators that can be used to generate sound in Javascript: sine, square, triangle, and sawtooth.</p>
+		<img src='./images/1.JPG'>
+		<p>We decided to go with a sine wave for our tones in Music Mode, since it sounded the most natural (less
+		distortion/harshness than others) using AudioContext(). In order to avoid a clicking sound at the end of each note, we
+		added a gain node to the oscillator by using the .createGain() parameter of AudioContext().</p>
+		<img src='./images/2.JPG'>
+		<p>To make the note stop ringing at a reasonable time, we used .exponentialRampToValueAtTime() to smoothly curtail the note
+		at 1.5 seconds. Finally we set the frequency of the notes to whole steps from A4 to A5 (one octave) using a note
+		frequencies chart (Hz)</p>
+		<img src='./images/3.JPG'>
+		<h2>A description of problems encountered and how you tackled them</h2>
+		<p>We encountered many problems during this project. The main issue we had was having to shift the software that we were
+		using for the project multiple times. We initially planned to export a batch of firework .dae files made in Blender into
+		our Project 3 code, but soon realized through TA feedback and our own work that this was too labor intensive. We then
+		switched to Roblox Studio engine and programming in Lua, but again decided it was not the best way to move forward after
+		receiving concerns from Professor Ren that the platform would not allow us to make the most out of our efforts to create
+		a satisfying simulation. Finally, we settled on using WebGL (three.js) for the project, since it solved all of those
+		aforementioned issues. Most of the issues we faced during the project had to do with the growing pains of learning
+		three.js. From setting the camera, to not seeing our fireworks properly, to creating a GUI to track the current mode, we
+		solved most of our issues by scouring the internet for Stack Overflow threads and video tutorials. Ultimately, we were
+		successful!</p>
+		<h2>Results</h2>
+		Demos of the projects can be found here:
+		A music demo of our firework simulation can be found at https://drive.google.com/file/d/1k2afLDFEfSQT_1U-b5va9mRTfwpIMoq3/view?usp=sharing
+		A freestyle demo of our firework simulation can be found at https://drive.google.com/file/d/1JMMqkMvlXh91lmhIh2NaDPwp2fnGsHoP/view?usp=sharing
+		<h2>Lessons learned</h2>
+		<p>One main lesson we learned is that it is extremely important to figure out the software you are using before you start
+		to develop a project (especially one as open-ended as this one). If we attended office hours more frequently, we are
+		certain we would have been steered in the right direction quicker than we did when using the spread out milestone and
+		final presentation feedback and sparingly went to office hours for clarification on feedback. Additionally, we learned
+		the true power of graphics software/packages like three.js and Blender. CS 184 is in C++ and goes heavily into the
+		linear algebra side of computer graphics, and as a result, the technical burden of creating graphics features such as
+		with the projects is heightened. Everything has to be done by hand and debugging can be excruciating with long rendering
+		hours. With modern rendering software, however, the possibilities are truly infinite. Building off of a wealth of
+		graphics research and optimization, their ease of use combined with extensive available resources (manuals, videos,
+		stackoverflow, etc.) makes them incredibly powerful tools that we all will continue to utilize and learn more about
+		after this semester.</p>
+		<h2>References</h2>
+		<h3>Software References</h3>
+		<p>Three.js Documentation https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene</p>
+		<p>Three.js Animation Loop https://discoverthreejs.com/book/first-steps/animation-loop/</p>
+		<p>Generate Sounds Programmatically With Javascript https://marcgg.com/blog/2016/11/01/javascript-audio/</p>
+		<p>WebGL Cheat Sheet
+		http://web.archive.org/web/20120314072005/http://www.nihilogic.dk/labs/webgl_cheat_sheet/WebGL_Cheat_Sheet.pdf</p>
+		<p>Keyboard Key Code Values https://www.oreilly.com/library/view/javascript-dhtml/9780596514082/apb.html</p>
+		<h3>Research Articles</h3>
+		<p>On Firework Blasts and Qualitative Parameter Dependency
+		https://royalsocietypublishing.org/doi/epdf/10.1098/rspa.2015.0720</p>
+		<p>A Fast Algorithm for Particle Simulations
+		https://users.flatironinstitute.org/~ahb/m126w12/public_html/Greengard1987JCP_Rokhlin_FMM_Coulomb_algorithm.pdf</p>
+		<p>Firework Simulation Based on Particle System in Virtual Scene
+		https://ieeexplore-ieee-org.libproxy.berkeley.edu/document/5694137</p>
+		<p>Real-time Simulation of Fireworks Based on GPU and Particle System
+		https://ieeexplore-ieee-org.libproxy.berkeley.edu/document/4958714</p>
+		<p>Rendering Fireworks Displays https://ieeexplore-ieee-org.libproxy.berkeley.edu/document/135912</p>
+		<h3>Videos</h3>
+		<p>Working with Three.js Particle Systems - They're AWESOME! https://www.youtube.com/watch?v=dLYMzNmILQA</p>
+		<p>Three.js Tutorial Crash Course - 2021 https://www.youtube.com/watch?v=YK1Sw_hnm58</p>
+		<p>Three.js Dat GUI Tutorial and Setup Guide https://www.youtube.com/watch?v=JyhhHhoqK2o</p>
+		<h2>Contributions from each team member</h2>
+		<p>Lucas: Led all team meetings. Provided guides to Three.js, Roblox Studio, Lua, and Blender. Handled groundwork of all design
+			choices and how to implement physics. Handled core development of physics simulation and how to apply physics in Three.js.</p>
+		<p>Frank: I was heavily involved in implementing the two main modes of the web app. For “Freestyle Mode” I implemented the ability
+		to click to launch firework, and to have that firework follow your mouse click location. For “Music Mode”, I implemented
+		the proper sounding music notes, the specific colors of firework attached to each note, and the keys binded to each
+		firework color/note pair. Lastly, I implemented a GUI and “ENTER” button press to allow the user to toggle between the
+		two modes and know which mode they are currently using.</p>
+		<p>Haoshen: I am mainly working on the research of the particle physics simulation reference material, working on the math/physic
+		logistics behind the simulation. Line out the project specifications and equations that need to be implemented. I wasn't
+		involved a lot in the coding of the web app version of firework but I code and demo some of the fragment physics
+		simulation inside a game engine at the early stage of the project.</p>
+		
 	
-	<h2>Goals and Deliverables:</h2>
-	<ul>
-		<li>We plan to deliver a simulation capable of producing a video/gif of one firework being shot up, exploding, and
-			lighting
-			up its surroundings (water and metal buildings) along the way. If things go ahead of schedule, we hope to be
-			able to
-			produce videos with multiple fireworks of different colors being shot at different times, along with many
-			additional
-			surroundings (grass, dirt, glass/concrete buildings). We will measure the quality/performance of our deliverable
-			by
-			comparing its realism to actual videos of fireworks in similar environments, along with the smoothness of the
-			video/gif
-			(frames per second).</li>
-		<li>Most of the questions that we receive from the presentation may be related to the particle effects/physics of
-			the
-			firework, since it will expand the topic of particle systems from lecture and Project 4.</li>
-	</ul>
-	
-	<h2>Schedule:</h2>
-	<ul>
-		<li>Week 1: Firework light source completed</li>
-		<li>Week 2: Surroundings implemented + properly lit by firework light source (direct + indirect lighting)</li>
-		<li>Week 3: Scene is fully animated (firework movement, explosion, and lighting)</li>
-		<li>Week 4: (If time permits) multiple fireworks at once + additional surroundings implemented</li>
-	</ul>
-	
-	<h2>Resources:</h2>
-	<p>There are two potential directions we could go. The first would be to use Project 3-1 as a starting point, and then
-		create a video by taking many screen shots at different times and stitching them together. The pros of this would be
-		that we’re familiar with the codebase, but the cons would be that it may be more difficult to code a firework in
-		this
-		environment, given its complexity. The other direction would be to use an engine like Unity. This would make it
-		easier
-		for us to make animated things like fireworks and water effects, but would be more difficult to learn since none of
-		us
-		have experience using Unity.</p>
-	
-	<p>Our webpage is at https://cal-cs184-student.github.io/sp22-project-webpages-Lukatastic/final/index.html</p>
+	<p>Our webpage is at http://runaway.tech</p>
 	</div>
 
 </body>
